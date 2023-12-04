@@ -22,7 +22,6 @@ export default function RootLayout({
       <body className={inter.className}>
         <main className='mt-[100px]'>
           <Providers session={session}>
-            {/* @ts-expect-error Server Component */}
             <Navbar />
             {children}
           </Providers>

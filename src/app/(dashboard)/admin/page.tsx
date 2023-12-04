@@ -1,5 +1,5 @@
 import DataContainer from "@/components/DataContainer"
-import Modal from "@/components/Modal"
+import UserModal from "@/components/Modal"
 import NoAccess from "@/components/NoAccess"
 import { options } from "@/lib/auth"
 import { getServerSession } from "next-auth"
@@ -9,7 +9,7 @@ const page = async () => {
   
   if (session?.user) {
     return <div>
-      <Modal user={session?.user}/>
+      <UserModal user={session?.user}/>
       <DataContainer />
     </ div>
   }

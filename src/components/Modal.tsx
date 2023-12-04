@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 
-const modal = (props: {user: User | undefined}) => {  
+const UserModal = (props: {user: User | undefined}) => {  
   const [index, setIndex] = useState(0)
   const [updatedUsername, setUpdatedUsername] = useState('')
   const [updatedJobTitle, setUpdatedJobTitle] = useState('')
@@ -63,4 +63,4 @@ const modal = (props: {user: User | undefined}) => {
     </>
 }
 
-export default modal
+export default UserModal
