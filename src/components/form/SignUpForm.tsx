@@ -11,10 +11,8 @@ import {
 } from '../ui/form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
-import Link from 'next/link';
-import GoogleSignInButton from '../GoogleSignInButton';
+import { useRouter } from 'next/navigation';
+import { Button, Input, Text, Link } from '@chakra-ui/react';
 
 const FormSchema = z
   .object({
@@ -32,6 +30,7 @@ const FormSchema = z
   });
 
 const SignUpForm = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -42,14 +41,31 @@ const SignUpForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof FormSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    const response = await fetch('/api/user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: values.username,
+        email: values.email,
+        password: values.password
+      })
+    })
+
+    if (response.ok) {
+      router.push('/sign-in')
+    } else {
+      console.log(response)
+      console.error('Registration failed')
+    }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
-        <div className='space-y-2'>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='form-container'>
+        <div className='innerFormContent'>
           <FormField
             control={form.control}
             name='username'
@@ -57,7 +73,7 @@ const SignUpForm = () => {
               <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input placeholder='johndoe' {...field} />
+                  <Input variant='outline' bg='white' placeholder='johndoe' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -70,7 +86,7 @@ const SignUpForm = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder='mail@example.com' {...field} />
+                  <Input variant='outline' bg='white'placeholder='mail@example.com' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -84,6 +100,8 @@ const SignUpForm = () => {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
+                    variant='outline'
+                    bg='white'
                     type='password'
                     placeholder='Enter your password'
                     {...field}
@@ -101,6 +119,8 @@ const SignUpForm = () => {
                 <FormLabel>Re-Enter your password</FormLabel>
                 <FormControl>
                   <Input
+                    variant='outline'
+                    bg='white'
                     placeholder='Re-Enter your password'
                     type='password'
                     {...field}
@@ -111,20 +131,16 @@ const SignUpForm = () => {
             )}
           />
         </div>
-        <Button className='w-full mt-6' type='submit'>
+        <Button type='submit' w='full' mt='30px' colorScheme='blue' variant='solid'>
           Sign up
         </Button>
       </form>
-      <div className='mx-auto my-4 flex w-full items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-400'>
-        or
-      </div>
-      <GoogleSignInButton>Sign up with Google</GoogleSignInButton>
-      <p className='text-center text-sm text-gray-600 mt-2'>
-        If you don&apos;t have an account, please&nbsp;
-        <Link className='text-blue-500 hover:underline' href='/sign-in'>
+      <Text color='gray.600' fontSize='sm' mt='2px' textAlign='center'>
+        If you already have an account, please&nbsp;{' '}
+        <Link color='blue.500' href='/sign-in'>
           Sign in
         </Link>
-      </p>
+      </Text>
     </Form>
   );
 };

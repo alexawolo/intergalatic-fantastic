@@ -1,3 +1,5 @@
+'use client'
+import { Container } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
 
 interface AuthLayoutProps {
@@ -5,7 +7,7 @@ interface AuthLayoutProps {
 }
 
 const AuthLayout: FC<AuthLayoutProps> = ({ children }) => {
-  return <div className='bg-slate-200 p-10 rounded-md'>{children}</div>;
+  return <Container mt='100px' w='md' bg='blue.50' p="10" borderRadius='md'>{children}</Container>;
 };
 
 export default AuthLayout;

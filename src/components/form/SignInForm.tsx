@@ -11,10 +11,9 @@ import {
 } from '../ui/form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
-import Link from 'next/link';
-import GoogleSignInButton from '../GoogleSignInButton';
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation';
+import { Button, Link, Text, Input, FormErrorMessage } from '@chakra-ui/react';
 
 const FormSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email'),
@@ -25,6 +24,7 @@ const FormSchema = z.object({
 });
 
 const SignInForm = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -33,14 +33,25 @@ const SignInForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof FormSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    const signInData = await signIn('credentials', {
+      email: values.email,
+      password: values.password,
+      redirect: false,
+    });
+
+    if(signInData?.error) {
+      console.log(signInData.error);
+    } else {
+      router.refresh();
+      router.push('/admin')
+    }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='w-full'>
-        <div className='space-y-2'>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='form-container'>
+        <div className='innerFormContent'>
           <FormField
             control={form.control}
             name='email'
@@ -48,7 +59,7 @@ const SignInForm = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder='mail@example.com' {...field} />
+                  <Input variant='outline' bg='white' placeholder='mail@example.com' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -62,30 +73,29 @@ const SignInForm = () => {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
+                    variant='outline' 
+                    bg='white'
                     type='password'
                     placeholder='Enter your password'
                     {...field}
                   />
                 </FormControl>
                 <FormMessage />
+                <FormErrorMessage>Password is required.</FormErrorMessage>
               </FormItem>
             )}
           />
         </div>
-        <Button className='w-full mt-6' type='submit'>
+        <Button type='submit' w='full' mt='30px' colorScheme='blue' variant='solid'>
           Sign in
         </Button>
       </form>
-      <div className='mx-auto my-4 flex w-full items-center justify-evenly before:mr-4 before:block before:h-px before:flex-grow before:bg-stone-400 after:ml-4 after:block after:h-px after:flex-grow after:bg-stone-400'>
-        or
-      </div>
-      <GoogleSignInButton>Sign in with Google</GoogleSignInButton>
-      <p className='text-center text-sm text-gray-600 mt-2'>
-        If you don&apos;t have an account, please&nbsp;
-        <Link className='text-blue-500 hover:underline' href='/sign-up'>
+      <Text color='gray.600' fontSize='sm' mt='2px' textAlign='center'>
+        If you don&apos;t have an account, please&nbsp;{' '}
+        <Link color='blue.500' href='/sign-up'>
           Sign up
         </Link>
-      </p>
+      </Text>
     </Form>
   );
 };
