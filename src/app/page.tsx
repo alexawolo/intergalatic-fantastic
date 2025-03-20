@@ -13,6 +13,7 @@ export default function Home() {
       <br></br>
       <br></br>
       <Text fontSize='xl' mb='4'>Testing Linear integration</Text>
+      <Text fontSize='xl' mb='4'>Building something...</Text>
     </Container>
     )
 }
