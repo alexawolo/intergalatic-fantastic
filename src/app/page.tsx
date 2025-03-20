@@ -12,7 +12,7 @@ export default function Home() {
       <Link href='/sign-up' color='blue.500'>Sign up to discover 🔭</Link>
       <br></br>
       <br></br>
-      <Text fontSize='xl' mb='4'>Test</Text>
+      <Text fontSize='xl' mb='4'>Testing Linear integration</Text>
     </Container>
     )
 }
